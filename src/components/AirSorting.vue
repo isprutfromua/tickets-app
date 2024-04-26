@@ -41,4 +41,3 @@ label {
     }
 }
 </style>
-../store/filtersStore

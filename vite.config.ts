@@ -8,8 +8,8 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
     resolve: {
         alias: {
-            '~shared': path.resolve(__dirname, './src/shared'),
-        },
+            '~shared': path.resolve(__dirname, './src/shared')
+        }
     },
     plugins: [
         vue(),
@@ -17,11 +17,14 @@ export default defineConfig({
             include: [
                 /\.[tj]s?$/, // .ts, .ts, .js, .js
                 /\.vue$/,
-                /\.vue\?vue/, // .vue
+                /\.vue\?vue/ // .vue
             ],
             dts: 'auto-imports.d.ts',
             imports: ['vue', '@vueuse/core', 'pinia'],
+            eslintrc: {
+                enabled: true
+            }
         }),
-        Components(),
-    ],
+        Components()
+    ]
 })

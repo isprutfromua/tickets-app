@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { filters, sortingRules } from './shared/settings.ts'
+import { filters, sortingRules } from '~shared'
 </script>
 
 <template>

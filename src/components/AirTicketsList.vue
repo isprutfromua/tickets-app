@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ITicket } from '~shared'
+import type { ITicket, TSortingKey } from '~shared'
 import { useFiltersStore } from '../store/filtersStore'
 import { TICKETS_CHUNK_SIZE, filterFuncs, sortingFuncs } from '~shared'
 
@@ -8,38 +8,40 @@ const props = defineProps<{
     isAllTicketsLoaded: boolean
 }>()
 const filtersStore = useFiltersStore()
-const filterRules = filtersStore.filtersState
-const sortRule = ref(filtersStore.sortState)
+const filterRules = ref(filtersStore.filtersState)
 
 const ticketsList = shallowRef<ITicket[]>([])
 const rawTickets = computed(() => props.tickets)
 
 watch(
-    [filterRules, sortRule, rawTickets],
+    [filterRules, rawTickets],
     () => {
         let tempTickets = rawTickets.value
 
-        if (filterRules.price.length) {
-            tempTickets = tempTickets.filter((ticket) => filterFuncs['price'](ticket, filterRules.price))
+        if (filterRules.value.price.length) {
+            tempTickets = tempTickets.filter((ticket) => filterFuncs['price'](ticket, filterRules.value.price))
         }
 
-        if (filterRules.transfers.length) {
-            tempTickets = tempTickets.filter((ticket) => filterFuncs['transfers'](ticket, filterRules.transfers))
-        }
-
-        if (sortRule.value) {
-            tempTickets.sort(sortingFuncs[sortRule.value])
+        if (filterRules.value.transfers.length) {
+            tempTickets = tempTickets.filter((ticket) => filterFuncs['transfers'](ticket, filterRules.value.transfers))
         }
 
         ticketsList.value = [...tempTickets]
     },
-    { deep: true, immediate: true },
+    { deep: true, immediate: true }
 )
+
+const sortTickets = (rule: TSortingKey) => {
+  let tempTickets = rawTickets.value
+  tempTickets.sort(sortingFuncs[rule])
+  ticketsList.value = [...tempTickets]
+}
 
 filtersStore.$onAction(({ name, after }) => {
     ticketsCount.value = TICKETS_CHUNK_SIZE
+
     if (name === 'updateSort') {
-        after((result) => (sortRule.value = result))
+        after((result) => (sortTickets(result)))
     }
 })
 
@@ -68,12 +70,12 @@ const {
     list: virtualList,
     scrollTo,
     containerProps,
-    wrapperProps,
+    wrapperProps
 } = useVirtualList(
     computed(() => ticketsList.value.slice(0, ticketsCount.value)),
     {
-        itemHeight: 180,
-    },
+        itemHeight: 180
+    }
 )
 </script>
 
@@ -84,7 +86,7 @@ const {
             <p>Displayed: {{ ticketsCount }}</p>
         </div>
 
-        <div v-bind="containerProps" style="height: 460px">
+        <div v-bind="containerProps" style="height: 70vh" class="scrollbar">
             <div v-bind="wrapperProps" class="space-y-5">
                 <AirTicket
                     v-for="(ticket, index) in virtualList"

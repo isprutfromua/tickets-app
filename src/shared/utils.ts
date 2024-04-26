@@ -10,7 +10,7 @@ export function formatCurrency(amount: number, currencyCode: string = CURRENCY, 
             style: 'currency',
             currency: currencyCode,
             minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
+            maximumFractionDigits: 0
         })
         return formatter.format(amount)
     } catch (error) {
@@ -18,7 +18,6 @@ export function formatCurrency(amount: number, currencyCode: string = CURRENCY, 
         return '' // Return an empty string in case of error
     }
 }
-
 export function formatTimeRange(date: string, duration: number) {
     try {
         if (!date || !duration) {
@@ -43,7 +42,6 @@ export function formatTimeRange(date: string, duration: number) {
         return ''
     }
 }
-
 export function toHoursAndMinutes(totalMinutes: number) {
     const hours = Math.floor(totalMinutes / 60)
     const minutes = totalMinutes % 60

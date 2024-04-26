@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { AirFilterProps, TFilterKeys } from '~shared'
+import type { AirFilterProps, TFilterKey } from '~shared'
 import { useFiltersStore } from '../store/filtersStore'
 
 const props = defineProps<AirFilterProps>()
 const isExpanded = ref(false)
 const filterStore = useFiltersStore()
-const filtersStorage = useLocalStorage('filters', {} as Record<TFilterKeys, []>)
+const filtersStorage = useLocalStorage('filters', {} as Record<TFilterKey, []>)
 const modelValue = ref(filtersStorage.value[props.filterKey] || [])
 watch(modelValue, () => filterStore.updateFilter(props.filterKey, modelValue.value))
 </script>
@@ -13,10 +13,7 @@ watch(modelValue, () => filterStore.updateFilter(props.filterKey, modelValue.val
 <template>
     <div class="bg-white shadow-md rounded">
         <fieldset class="md:pb-5" :class="{ 'pb-5': !isExpanded }">
-            <legend
-                class="p-5 text-neutral-600 text-xs font-semibold uppercase leading-3 tracking-wide w-full flex items-center justify-between cursor-pointer md:cursor-auto"
-                @click="isExpanded = !isExpanded"
-            >
+            <legend @click="isExpanded = !isExpanded">
                 {{ filter.label }}
 
                 <button class="appearance-none cursor-pointer md:hidden">
@@ -42,4 +39,9 @@ watch(modelValue, () => filterStore.updateFilter(props.filterKey, modelValue.val
         </fieldset>
     </div>
 </template>
-../store/filtersStore
+
+<style scoped lang="postcss">
+legend {
+    @apply p-5 text-neutral-600 text-xs font-semibold uppercase leading-3 tracking-wide w-full flex items-center justify-between cursor-pointer md:cursor-auto;
+}
+</style>

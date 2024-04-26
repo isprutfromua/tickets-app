@@ -2,16 +2,18 @@
 import type { ITicket } from '~shared'
 
 const worker = new Worker('worker.js')
-const data = await fetch(import.meta.env.VITE_API_BASE_URL + '/search').then((res) => res.json())
-let searchId = ''
-if (data && data.searchId) {
-    searchId = data.searchId
-}
-
+const searchId = ref('')
 const tickets = shallowRef<ITicket[]>([])
 const stop = ref<boolean>(false)
 const error = ref()
 const loading = ref(true)
+
+const fetchSearchId = async () => {
+    const data = await fetch(import.meta.env.VITE_API_BASE_URL + '/search').then((res) => res.json())
+    if (data && data.searchId) {
+        searchId.value = data.searchId
+    }
+}
 
 const fetchData = (reset: boolean = true) => {
     if (reset) {
@@ -19,7 +21,7 @@ const fetchData = (reset: boolean = true) => {
         error.value = ''
     }
 
-    worker.postMessage(import.meta.env.VITE_API_BASE_URL + `/tickets?searchId=${searchId}`)
+    worker.postMessage(import.meta.env.VITE_API_BASE_URL + `/tickets?searchId=${searchId.value}`)
 }
 
 worker.onmessage = function (event) {
@@ -35,7 +37,10 @@ worker.onmessage = function (event) {
     loading.value = false
 }
 
-onBeforeMount(fetchData)
+onBeforeMount(async () => {
+    await fetchSearchId()
+    fetchData()
+})
 </script>
 
 <template>
