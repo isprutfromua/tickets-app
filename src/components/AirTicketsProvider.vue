@@ -8,11 +8,9 @@ const stop = ref<boolean>(false)
 const error = ref()
 const loading = ref(true)
 
-const fetchSearchId = async () => {
-    const data = await fetch(import.meta.env.VITE_API_BASE_URL + '/search').then((res) => res.json())
-    if (data && data.searchId) {
-        searchId.value = data.searchId
-    }
+const data = await fetch(import.meta.env.VITE_API_BASE_URL + '/search').then((res) => res.json())
+if (data && data.searchId) {
+    searchId.value = data.searchId
 }
 
 const fetchData = (reset: boolean = true) => {
@@ -37,10 +35,7 @@ worker.onmessage = function (event) {
     loading.value = false
 }
 
-onBeforeMount(async () => {
-    await fetchSearchId()
-    fetchData()
-})
+onBeforeMount(fetchData)
 </script>
 
 <template>

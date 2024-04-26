@@ -38,10 +38,12 @@ const sortTickets = (rule: TSortingKey) => {
 }
 
 filtersStore.$onAction(({ name, after }) => {
-    ticketsCount.value = TICKETS_CHUNK_SIZE
-
     if (name === 'updateSort') {
         after((result) => (sortTickets(result)))
+    }
+
+    if (ticketsCount.value > ticketsList.value.length) {
+        ticketsCount.value = ticketsList.value.length
     }
 })
 
@@ -58,7 +60,7 @@ const displayMoreTickets = () => {
     })
 }
 const displayLoadMore = computed(() => ticketsList.value.length > ticketsCount.value)
-const isAllTicketsVisible = computed(() => ticketsList.value.length === ticketsCount.value)
+const isAllTicketsVisible = computed(() => props.tickets.length === ticketsCount.value)
 const emit = defineEmits<{
     'fetch:click': []
 }>()
@@ -83,10 +85,10 @@ const {
     <template v-if="ticketsList.length">
         <div class="flex justify-between">
             <p>Total tickets: {{ ticketsList.length }}</p>
-            <p>Displayed: {{ ticketsCount }}</p>
+            <p>Displayed: {{ ticketsCount > ticketsList.length ? ticketsList.length : ticketsCount }}</p>
         </div>
 
-        <div v-bind="containerProps" style="height: 70vh" class="scrollbar">
+        <div v-bind="containerProps" style="max-height: 65vh" class="scrollbar">
             <div v-bind="wrapperProps" class="space-y-5">
                 <AirTicket
                     v-for="(ticket, index) in virtualList"
