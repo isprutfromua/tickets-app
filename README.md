@@ -1,5 +1,7 @@
 # Tickets app
 
+Link to production - https://tickets-app-blush.vercel.app/
+
 Used:
 - Vue 3
 - TypeScript
